@@ -1,5 +1,5 @@
 tags:
-  - name: Original Teks
+  - name: Get Text
 get:
   description: Menghilangkan non-alphabetical
 responses:

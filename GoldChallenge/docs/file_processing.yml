@@ -1,7 +1,12 @@
 tags:
-  - name: Get Text
+  - name: Cleansing with File
 get:
-  description: Halo, apa kabar semua?
+  description: File yang akan diproses
+parameters:
+  - name: text
+    in: formData
+    required: true
+    type: string
 responses:
   '200':
     description: Successful response
