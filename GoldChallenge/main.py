@@ -97,7 +97,7 @@ def text_processing():
                 test_list_words.append(new)
             else:
                 test_list_words.append(new)
-    print(' '.join(test_list_words))
+    #print(' '.join(test_list_words))
     
     json_response = {
         
