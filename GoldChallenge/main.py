@@ -1,4 +1,5 @@
 import re
+import csv
 from lazy_string import LazyString
 from flask import Flask, jsonify
 
@@ -63,20 +64,52 @@ def text_clean():
 
 
 # Data cleansing with text
+
+# Import Csv lalu conver ke list
+from collections import Iterable 
+with open('/root/DSC-agil/GoldChallenge/abusive.csv', newline='') as f:
+    def flatten(lis): #delete [] every word
+     for item in lis:
+         if isinstance(item, Iterable) and not isinstance(item, str):
+             for x in flatten(item):
+                 yield x
+         else:        
+             yield item
+             
+    # Return a reader object which will
+    # iterate over lines in the given csvfile
+    reader = csv.reader(f)
+
+    # convert string to list
+    list_words = list(flatten(reader))
+
+#######################################
 @swag_from("docs/text_processing.yml", methods=['POST'])
 @app.route('/text-processing', methods=['POST'])
+
 def text_processing():
 
     text = request.form.get('text')
-
+    test_list_words=[]
+    for new in text.split(" "):
+            if new in list_words:
+                new="*****"
+                test_list_words.append(new)
+            else:
+                test_list_words.append(new)
+    print(' '.join(test_list_words))
+    
     json_response = {
         
-        'Cleansing result': re.sub(r'[^a-zA-Z0-9]', ' ', text)
+        #'Cleansing result': re.sub(r'[^a-zA-Z0-9]', ' ', text)
+        'Cleansing result': (' '.join(test_list_words))
         
     }
 
     response_data = jsonify(json_response)
     return response_data
+
+
 
 
 '''
