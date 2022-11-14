@@ -67,7 +67,7 @@ def text_clean():
 
 # Import Csv lalu conver ke list
 from collections import Iterable 
-with open('/root/DSC-agil/GoldChallenge/abusive.csv', newline='') as f:
+with open('/root/baranesia/DSC-agil/GoldChallenge/abusive.csv', newline='') as f:
     def flatten(lis): #delete [] every word
      for item in lis:
          if isinstance(item, Iterable) and not isinstance(item, str):
