@@ -2,6 +2,9 @@ import re
 import csv
 from lazy_string import LazyString
 from flask import Flask, jsonify
+from collections.abc import Iterable
+
+
 
 app = Flask(__name__)
 
@@ -66,8 +69,8 @@ def text_clean():
 # Data cleansing with text
 
 # Import Csv lalu conver ke list
-from collections import Iterable 
-with open('/root/DSC-agil/GoldChallenge/abusive.csv', newline='') as f:
+
+with open('/root/baranesia/DSC-agil/GoldChallenge/abusive.csv', newline='') as f:
     def flatten(lis): #delete [] every word
      for item in lis:
          if isinstance(item, Iterable) and not isinstance(item, str):
