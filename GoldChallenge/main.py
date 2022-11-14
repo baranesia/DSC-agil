@@ -104,8 +104,9 @@ def text_processing():
     
     json_response = {
         
-        #'Cleansing result': re.sub(r'[^a-zA-Z0-9]', ' ', text)
-        'Cleansing result': (' '.join(test_list_words))
+         
+        'Cleansing result': (' '.join(test_list_words)),
+        'Raw text': (text) 
         
     }
 
