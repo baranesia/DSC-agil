@@ -2,6 +2,7 @@ import re
 import csv
 from lazy_string import LazyString
 from flask import Flask, jsonify
+from collections.abc import Iterable
 
 app = Flask(__name__)
 
@@ -44,10 +45,8 @@ def text():
         'description': "Original Teks",
         'data': "Halo, apa kabar semua?"
     }
-
     response_data = jsonify(json_response)
     return response_data
-
 # Get data 
 @swag_from("docs/text_clean.yml", methods=['GET'])
 @app.route('/text-clean', methods=['GET'])
@@ -57,7 +56,6 @@ def text_clean():
         'description': "Original Teks",
         'data': re.sub(r'[^a-zA-Z0-9]', ' ', "Halo, apa kabar semua?")
     }
-
     response_data = jsonify(json_response)
     return response_data
 '''
@@ -66,7 +64,7 @@ def text_clean():
 # Data cleansing with text
 
 # Import Csv lalu conver ke list
-from collections import Iterable 
+
 with open('/root/baranesia/DSC-agil/GoldChallenge/abusive.csv', newline='') as f:
     def flatten(lis): #delete [] every word
      for item in lis:
@@ -101,8 +99,9 @@ def text_processing():
     
     json_response = {
         
-        #'Cleansing result': re.sub(r'[^a-zA-Z0-9]', ' ', text)
-        'Cleansing result': (' '.join(test_list_words))
+         
+        'Cleansing result': (' '.join(test_list_words)),
+        'Raw text': (text) 
         
     }
 
@@ -111,21 +110,17 @@ def text_processing():
 
 
 
-
 '''
 # Data cleansing with file
 @swag_from("docs/file_processing.yml", methods=['POST'])
 @app.route('/file-processing', methods=['POST'])
 def file_processing():
-
     text = request.form.get('text')
-
     json_response = {
         'status_code': 200,
         'description': "Original Teks",
         'data': re.sub(r'[^a-zA-Z0-9]', ' ', text)
     }
-
     response_data = jsonify(json_response)
     return response_data
 '''
