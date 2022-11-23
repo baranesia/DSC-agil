@@ -115,20 +115,27 @@ def text_processing():
 
 
 
-'''
+
 # Data cleansing with file
 @swag_from("docs/file_processing.yml", methods=['POST'])
-@app.route('/file-processing', methods=['POST'])
-def file_processing():
-    text = request.form.get('text')
+@app.route('/file-processing', methods=['GET','POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['file01']
+        abs01 = pd.read_csv(f, encoding='latin-1')
+        pt03 = abs01['Tweet'].values.tolist()
+
+
     json_response = {
-        'status_code': 200,
-        'description': "Original Teks",
-        'data': re.sub(r'[^a-zA-Z0-9]', ' ', text)
+    
+    'result': (pt03),
+    #'Raw text': () 
+    
     }
+
     response_data = jsonify(json_response)
     return response_data
-'''
+
 
 
 if __name__ == '__main__':

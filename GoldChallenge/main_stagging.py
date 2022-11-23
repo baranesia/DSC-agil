@@ -1,10 +1,16 @@
 import re
 import csv
 from lazy_string import LazyString
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, render_template
 from collections.abc import Iterable
 import pandas as pd
 import more_itertools
+import os
+import uuid
+import json
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import  FileStorage
+
 
 app = Flask(__name__)
 
@@ -49,6 +55,7 @@ def text():
     }
     response_data = jsonify(json_response)
     return response_data
+
 # Get data 
 @swag_from("docs/text_clean.yml", methods=['GET'])
 @app.route('/text-clean', methods=['GET'])
@@ -115,21 +122,27 @@ def text_processing():
 
 
 
-'''
+
 # Data cleansing with file
 @swag_from("docs/file_processing.yml", methods=['POST'])
-@app.route('/file-processing', methods=['POST'])
-def file_processing():
-    text = request.form.get('text')
+@app.route('/file-processing', methods=['GET','POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['file01']
+        abs01 = pd.read_csv(f, encoding='latin-1')
+        pt03 = abs01['Tweet'].values.tolist()
+
+
     json_response = {
-        'status_code': 200,
-        'description': "Original Teks",
-        'data': re.sub(r'[^a-zA-Z0-9]', ' ', text)
+    
+    'result': (pt03),
+    #'Raw text': () 
+    
     }
+
     response_data = jsonify(json_response)
     return response_data
-'''
-
+            
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

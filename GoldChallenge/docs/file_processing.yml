@@ -1,12 +1,12 @@
 tags:
-  - name: Cleansing with File
+  - name: Cleansing with upload file
 get:
   description: File yang akan diproses
 parameters:
-  - name: text
+  - name: file01
     in: formData
     required: true
-    type: string
+    type: file
 responses:
   '200':
     description: Successful response
