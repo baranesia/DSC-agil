@@ -17,7 +17,7 @@ from pathlib import Path
 
 ### DB Connection ###
 db_path = Path(__file__).parent/'db_stagging.db'
-print("test",db_path)
+#print("test",db_path)
 try:
     sqliteConnection = sqlite3.connect(db_path, check_same_thread=False)
     cursor = sqliteConnection.cursor()
@@ -67,19 +67,6 @@ def text():
     response_data = jsonify(json_response)
     return response_data
 '''
-# Get data 
-@swag_from("docs/text_clean.yml", methods=['GET'])
-@app.route('/text-clean', methods=['GET'])
-def text_clean():
-    json_response = {
-        'status_code': 200,
-        'description': "Original Teks",
-        'data': re.sub(r'[^a-zA-Z0-9]', ' ', "Halo, apa kabar semua?")
-    }
-    response_data = jsonify(json_response)
-    return response_data
-
-
 
 ## DATA CLEANSING WITH INPUT TEXT ##
 ### Read File Abusive & Kamus alay ##
@@ -170,7 +157,25 @@ def upload_file():
 
     response_data = jsonify(json_response)
     return response_data
-            
+
+
+### Show Clean Result ###
+#get_hasil = pd.read_sql_query("SELECT * FROM hasil_clean", sqliteConnection)
+#show_hasil = pd.DataFrame(get_hasil)
+@swag_from("docs/show_clean_result.yml", methods=['GET'])
+@app.route('/clean-result', methods=['GET'])
+def text_clean():
+    cursor.execute("SELECT * FROM hasil_clean")
+    show_hasil = cursor.fetchall()   
+
+    json_response = {
+
+    'Result': (show_hasil),   
+}
+    sqliteConnection.commit()
+    response_data = jsonify(json_response)
+    return response_data
+
 ## END ##
 if __name__ == '__main__':
     app.run(debug=True)

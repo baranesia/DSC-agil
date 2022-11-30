@@ -1,7 +1,7 @@
 tags:
   - name: Get Text
 get:
-  description: Menghilangkan non-alphabetical
+  description: Show hasil cleansing
 responses:
   '200':
     description: Successful response

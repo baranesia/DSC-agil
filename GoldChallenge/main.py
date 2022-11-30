@@ -67,15 +67,21 @@ def text():
     response_data = jsonify(json_response)
     return response_data
 '''
-# Get data 
-@swag_from("docs/text_clean.yml", methods=['GET'])
-@app.route('/text-clean', methods=['GET'])
+### Show Clean Result ###
+#get_hasil = pd.read_sql_query("SELECT * FROM hasil_clean", sqliteConnection)
+#show_hasil = pd.DataFrame(get_hasil)
+@swag_from("docs/show_clean_result.yml", methods=['GET'])
+@app.route('/clean-result', methods=['GET'])
 def text_clean():
+    cursor.execute("SELECT * FROM hasil_clean")
+    show_hasil = cursor.fetchall()   
+
     json_response = {
-        'status_code': 200,
-        'description': "Original Teks",
-        'data': re.sub(r'[^a-zA-Z0-9]', ' ', "Halo, apa kabar semua?")
-    }
+    'Line 1 = Raw Text, '
+    'Line 2 = Clean Text'
+    ' ': (show_hasil),   
+}
+    sqliteConnection.commit()
     response_data = jsonify(json_response)
     return response_data
 
