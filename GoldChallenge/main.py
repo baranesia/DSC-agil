@@ -13,16 +13,17 @@ from werkzeug.datastructures import  FileStorage
 from flask import request
 from flasgger import Swagger, swag_from, LazyJSONEncoder, LazyString
 import sqlite3
+from pathlib import Path
 
 ### DB Connection ###
+db_path = Path(__file__).parent/'db_prod.db'
+print("test",db_path)
 try:
-    sqliteConnection = sqlite3.connect('db_bara.db')
+    sqliteConnection = sqlite3.connect(db_path, check_same_thread=False)
     cursor = sqliteConnection.cursor()
     print(">>>>> BERHASIL CONNECT DB <<<<<<")
 
     record = cursor.fetchall()
-    cursor.close()
-
 except sqlite3.Error as error:
     print(">>>>> GAGAL CONNECT DB <<<<<<", error)
 
@@ -65,7 +66,7 @@ def text():
     }
     response_data = jsonify(json_response)
     return response_data
-
+'''
 # Get data 
 @swag_from("docs/text_clean.yml", methods=['GET'])
 @app.route('/text-clean', methods=['GET'])
@@ -77,12 +78,11 @@ def text_clean():
     }
     response_data = jsonify(json_response)
     return response_data
-'''
+
 
 
 ## DATA CLEANSING WITH INPUT TEXT ##
 ### Read File Abusive & Kamus alay ##
-
 abs = pd.read_sql_query("SELECT * FROM abusive", sqliteConnection)
 df_abusive = pd.DataFrame(abs)
 kamus = pd.read_sql_query("SELECT * FROM alay", sqliteConnection)
@@ -94,6 +94,7 @@ df_alay = pd.DataFrame(kamus)
 def text_processing():
 
     text = request.form.get('text')
+    text01 = text
 ##### abusive proccess #####
     test_list_words=[]
     for new in text.split(" "):
@@ -115,6 +116,14 @@ def text_processing():
         else:
                 test_list_words01.append(new)
     hasil = list(more_itertools.collapse(test_list_words01, base_type=str))
+    hasil01 = (' '.join(hasil))
+    raw = (text)
+
+    sqlite_insert_query = ("INSERT INTO hasil_clean (raw_text, hasil_text) VALUES (?,?)")
+
+    cursor.execute(sqlite_insert_query,(raw, hasil01))
+    sqliteConnection.commit()
+    #cursor.close()
 
     json_response = {
     
