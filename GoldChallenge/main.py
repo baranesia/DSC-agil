@@ -1,17 +1,33 @@
 import re
 import csv
 from lazy_string import LazyString
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, render_template
 from collections.abc import Iterable
 import pandas as pd
 import more_itertools
-
-app = Flask(__name__)
-
+import os
+import uuid
+import json
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import  FileStorage
 from flask import request
 from flasgger import Swagger, swag_from, LazyJSONEncoder, LazyString
+import sqlite3
+
+### DB Connection ###
+try:
+    sqliteConnection = sqlite3.connect('db_bara.db')
+    cursor = sqliteConnection.cursor()
+    print(">>>>> BERHASIL CONNECT DB <<<<<<")
+
+    record = cursor.fetchall()
+    cursor.close()
+
+except sqlite3.Error as error:
+    print(">>>>> GAGAL CONNECT DB <<<<<<", error)
 
 
+app = Flask(__name__)
 app.json_encoder = LazyJSONEncoder
 swagger_template = dict(
     info = {
@@ -49,6 +65,7 @@ def text():
     }
     response_data = jsonify(json_response)
     return response_data
+
 # Get data 
 @swag_from("docs/text_clean.yml", methods=['GET'])
 @app.route('/text-clean', methods=['GET'])
@@ -63,22 +80,21 @@ def text_clean():
 '''
 
 
-# Data cleansing with text
+## DATA CLEANSING WITH INPUT TEXT ##
+### Read File Abusive & Kamus alay ##
 
-abs = pd.read_csv("/root/baranesia/DSC-agil/GoldChallenge/abusive.csv")
+abs = pd.read_sql_query("SELECT * FROM abusive", sqliteConnection)
 df_abusive = pd.DataFrame(abs)
-kamus = pd.read_csv("/root/baranesia/DSC-agil/GoldChallenge/new_kamusalay.csv" ,encoding='latin-1')
+kamus = pd.read_sql_query("SELECT * FROM alay", sqliteConnection)
 df_alay = pd.DataFrame(kamus)
-
-#######################################
+### Routing to yml ###
 @swag_from("docs/text_processing.yml", methods=['POST'])
 @app.route('/text-processing', methods=['POST'])
-
+## Cleansing process ## 
 def text_processing():
 
     text = request.form.get('text')
-# abusive proccess
-#text = 't3tapjokowi presidenku naik onta'
+##### abusive proccess #####
     test_list_words=[]
     for new in text.split(" "):
         if new in df_abusive['data'].values:
@@ -87,7 +103,7 @@ def text_processing():
         else:
                 test_list_words.append(new)
         ngalay = ' '.join(test_list_words)
-# ngalay proses
+##### ngalay proses #####
     text01 = ngalay
     test_list_words01=[]
     for new in text01.split(" "):
@@ -99,8 +115,6 @@ def text_processing():
         else:
                 test_list_words01.append(new)
     hasil = list(more_itertools.collapse(test_list_words01, base_type=str))
-#print(' '.join(hasil))
-
 
     json_response = {
     
@@ -114,29 +128,41 @@ def text_processing():
     return response_data
 
 
-
-
-# Data cleansing with file
+## DATA CLEANSING WITH FILE ##
+### Routing to yml ###
 @swag_from("docs/file_processing.yml", methods=['POST'])
 @app.route('/file-processing', methods=['GET','POST'])
+## Cleansing process ## 
 def upload_file():
     if request.method == 'POST':
         f = request.files['file01']
         abs01 = pd.read_csv(f, encoding='latin-1')
-        pt03 = abs01['Tweet'].values.tolist()
+        df_tweet = pd.DataFrame(abs01)
+        text_upload = abs01['Tweet'].values.tolist()
+        
+    text = df_tweet
+    ##### abusive proccess #####
+    upload_list=[]
+    for new in text.split(" "):
+        if new in df_tweet['Tweet'].values:
+                new = "****"
+                upload_list.append(new)
+        else:
+                upload_list.append(new)
 
 
     json_response = {
     
-    'result': (pt03),
+    'result': (' '.join(upload_list)),
     #'Raw text': () 
     
     }
 
+
     response_data = jsonify(json_response)
     return response_data
-
-
-
+            
+## END ##
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
+############### 
