@@ -130,30 +130,18 @@ def text_processing():
 @app.route('/file-processing', methods=['GET','POST'])
 ## Cleansing process ## 
 def upload_file():
-    if request.method == 'POST':
-        f = request.files['file01']
-        abs01 = pd.read_csv(f, encoding='latin-1')
-        df_tweet = pd.DataFrame(abs01)
-        text_upload = abs01['Tweet'].values.tolist()
-        
-    text = df_tweet
-    ##### abusive proccess #####
-    upload_list=[]
-    for new in text.split(" "):
-        if new in df_tweet['Tweet'].values:
-                new = "****"
-                upload_list.append(new)
-        else:
-                upload_list.append(new)
-
+    request.method == 'POST'
+    f = request.files['file01']
+    abs01 = pd.read_csv(f, encoding='latin-1')
+    df_tweet = pd.DataFrame(abs01)
+    text_upload = df_tweet['Tweet']
 
     json_response = {
     
-    'result': (' '.join(upload_list)),
+    'result': (''.join(text_upload)),
     #'Raw text': () 
     
     }
-
 
     response_data = jsonify(json_response)
     return response_data

@@ -154,21 +154,10 @@ def upload_file():
         abs01 = pd.read_csv(f, encoding='latin-1')
         df_tweet = pd.DataFrame(abs01)
         text_upload = abs01['Tweet'].values.tolist()
-        
-    text = df_tweet
-    ##### abusive proccess #####
-    upload_list=[]
-    for new in text.split(" "):
-        if new in df_tweet['Tweet'].values:
-                new = "****"
-                upload_list.append(new)
-        else:
-                upload_list.append(new)
-
 
     json_response = {
     
-    'result': (' '.join(upload_list)),
+    'result': (' '.join(text_upload)),
     #'Raw text': () 
     
     }
